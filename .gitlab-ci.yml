@@ -1,0 +1,220 @@
+stages:
+- pipelines
+- common
+- static-code-analysis
+- frontend
+- validator-post
+- packages-in-projects
+- tag
+- deploy
+pipelines:
+  stage: pipelines
+  script: /pub/ci/pipelines/pipelines.py
+  only:
+  - branches
+  - merge_requests
+ci-config-check:
+  stage: common
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-config-check:latest
+  allow_failure: false
+  only:
+  - branches
+  - merge_requests
+changelog-check:
+  stage: common
+  script: /pub/ci/changelog/changelog.py
+  allow_failure: false
+  only:
+  - branches
+  - merge_requests
+validator-pre-global:
+  stage: static-code-analysis
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-validator-global:latest
+  allow_failure: false
+  only:
+  - branches
+  - merge_requests
+validator-pre-js:
+  stage: static-code-analysis
+  variables:
+    CI_SUB_DIR: .
+    CI_EXTENSIONS: .js,.jsx
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-validator-js:latest
+  allow_failure: false
+  only:
+  - branches
+  - merge_requests
+validator-pre-json:
+  stage: static-code-analysis
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-validator-json:latest
+  allow_failure: false
+  only:
+  - branches
+  - merge_requests
+cpd-js-jsx:
+  stage: static-code-analysis
+  variables:
+    CI_SUB_DIR: .
+    CI_EXTENSIONS: js,jsx
+    CI_FORMAT: javascript
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-cpd-js-css:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+cpd-css:
+  stage: static-code-analysis
+  variables:
+    CI_SUB_DIR: .
+    CI_EXTENSIONS: less
+    CI_FORMAT: less
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-cpd-js-css:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+frontend-build-node10:
+  stage: frontend
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-frontend-build/node10:latest
+  allow_failure: false
+  only:
+  - branches
+  - merge_requests
+frontend-build-node12:
+  stage: frontend
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-frontend-build/node12:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+  when: manual
+frontend-flow-node10:
+  stage: frontend
+  tags:
+  - dockerized
+  variables:
+    CI_THRESHOLD: "90"
+    CI_SUB_DIR: .
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-frontend-flow-coverage/node10:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - logs/flow.log
+    when: always
+frontend-flow-node12:
+  stage: frontend
+  tags:
+  - dockerized
+  variables:
+    CI_THRESHOLD: "90"
+    CI_SUB_DIR: .
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-frontend-flow-coverage/node12:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - logs/flow.log
+    when: always
+  when: manual
+frontend-license-node10:
+  stage: frontend
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-frontend-license/node10:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+frontend-license-node12:
+  stage: frontend
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-frontend-license/node12:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+  when: manual
+validator-post-js:
+  stage: validator-post
+  variables:
+    CI_SUB_DIR: .
+    CI_EXTENSIONS: .js,.jsx
+    CI_MODE: post
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-validator-js:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+validator-post-css:
+  stage: validator-post
+  variables:
+    CI_SUB_DIR: .
+    CI_EXTENSIONS: .
+    CI_MODE: post
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-validator-css:latest
+  allow_failure: true
+  only:
+  - branches
+  - merge_requests
+packages-in-projects:
+  stage: packages-in-projects
+  script: /pub/ci/packages_in_projects/packages_in_projects.py
+  allow_failure: true
+  only:
+  - master
+tag:
+  stage: tag
+  script: /pub/ci/tag/project.py
+  only:
+  - master
+npm-publish:
+  stage: deploy
+  tags:
+  - dockerized
+  script: run.sh
+  image: cr.userstory.ru/docker-ci/ci-npm-publish:latest
+  allow_failure: false
+  only:
+  - tags

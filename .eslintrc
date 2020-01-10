@@ -1,0 +1,3 @@
+{
+    "extends": "@userstory/eslint-config/standards/default_pre.js"
+}

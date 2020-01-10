@@ -1,0 +1,68 @@
+{
+    "name": "@userstory/auth-token",
+    "author": "userstory",
+    "main": "dist/js/auth-token.min.js",
+    "files": [
+        "dist"
+    ],
+    "description": "auth-token",
+    "dependencies": {
+        "js-cookie": "^2.2.1",
+        "node-localstorage": "^2.1.5"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.4.5",
+        "@userstory/babel-preset": "^0.7.0",
+        "@userstory/eslint-config": "^0.25.2",
+        "@userstory/stylelint-config": "^0.29.0",
+        "@userstory/webpack-config": "^0.3.0",
+        "cross-env": "^5.2.0",
+        "eslint": "^5.16.0",
+        "flow-bin": "^0.100.0",
+        "husky": "^2.3.0",
+        "lint-staged": "^8.1.7",
+        "postcss-flexbugs-fixes": "^4.1.0",
+        "postcss-gradient-transparency-fix": "^3.0.0",
+        "postcss-preset-env": "^6.6.0",
+        "speed-measure-webpack-plugin": "^1.3.1",
+        "stylelint": "^10.0.1",
+        "webpack": "^4.32.2",
+        "webpack-cli": "^3.3.2",
+        "webpack-node-externals": "^1.7.2"
+    },
+    "engines": {
+        "node": ">=10.0.0",
+        "npm": ">=6.0.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "license": "UNLICENSED",
+    "lint-staged": {
+        "*.{js,jsx}": [
+            "eslint --fix",
+            "git add"
+        ],
+        "*.{css,less}": [
+            "stylelint --fix",
+            "git add"
+        ]
+    },
+    "private": false,
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.userstory.ru:userstory-frontend/auth-token.git"
+    },
+    "scripts": {
+        "build": "cross-env NODE_ENV=production webpack --mode=production",
+        "dev": "cross-env NODE_ENV=development webpack --mode=development --watch",
+        "flow": "flow",
+        "flow:coverage": "flow-coverage-report",
+        "lint:css": "stylelint src/**/*.{css,less}",
+        "lint:js": "eslint src --ext .js,.jsx",
+        "start": "cross-env NODE_ENV=development webpack --mode=development --watch"
+    },
+    "version": "0.1.0"
+}
