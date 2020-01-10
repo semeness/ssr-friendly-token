@@ -1,6 +1,7 @@
 // @flow
 
 import {StorageProviderCookie} from 'helpers/cookie';
+import {getCookieData} from 'helpers/cookie.js';
 import {StorageProviderStorage} from 'helpers/storage';
 import {IStorageData, type TStorageDataOptions} from 'types';
 
@@ -11,8 +12,6 @@ const defaultOptions = {
     namespace: 'storage-data__',
     remember: false,
 };
-
-const isServer = !process.browser;
 
 const cookie = new StorageProviderCookie();
 
@@ -56,6 +55,18 @@ export class StorageData implements IStorageData {
         if (!this.key) {
             throw new Error('Key is not defined!');
         }
+    }
+
+    getDataFromRequestHeaders(req: any = null): ?string {
+        this.checkKey();
+
+        if (req && !this.remember) {
+            const cookieData = getCookieData(req.headers.cookie);
+
+            return cookieData[this.key];
+        }
+
+        return storage.get(this.key);
     }
 
     get data() {

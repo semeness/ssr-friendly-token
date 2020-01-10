@@ -20,3 +20,14 @@ export class StorageProviderCookie implements IStorageProvider {
         Cookies.set(key, JSON.stringify(data));
     }
 }
+
+export function getCookieData(str) {
+    const cookieValueList = str.split('; ');
+    const result = {};
+    for (let i = 0; i < cookieValueList.length; i++) {
+        const keyValueList = cookieValueList[i].split('=');
+        result[keyValueList[0]] = keyValueList[1];
+    }
+
+    return result;
+}
