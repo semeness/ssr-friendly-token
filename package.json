@@ -1,7 +1,10 @@
 {
     "name": "ssr-token",
     "author": "semeness",
-    "main": "src/index.js",
+    "main": "dist/js/auth-token.min.js",
+    "files": [
+        "dist"
+    ],
     "description": "auth-token",
     "dependencies": {
         "js-cookie": "^2.2.1",
