@@ -1,6 +1,6 @@
 {
-    "name": "@userstory/auth-token",
-    "author": "userstory",
+    "name": "ssr-token",
+    "author": "semeness",
     "main": "dist/js/auth-token.min.js",
     "files": [
         "dist"
